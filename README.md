@@ -1,2 +1,2 @@
 # ms-organizaciones
-Prueba de ABC Organizaciones
+ABC Organizaciones
