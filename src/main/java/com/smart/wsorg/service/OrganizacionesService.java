@@ -69,8 +69,14 @@ public class OrganizacionesService implements IOrganizacionesService {
 	 * {@link com.smart.wsorg.service.IOrganizacionesService#eliminaOrganizacion}
 	 */
 	@Override
-	public boolean eliminaOrganizacion(Integer idOrganizacion) throws BusinessException {
-		organizacionesRepository.deleteById(idOrganizacion);
+	public boolean eliminaOrganizacion(Integer idOrganizacion, String codigoEncriptacion) throws BusinessException {
+		Optional<Organizacion> orgBdopt = organizacionesRepository.findById(idOrganizacion);
+		if (orgBdopt.isPresent()) {
+			Organizacion orgBD = orgBdopt.get();
+			validaCodigoEncriptacion(orgBD, codigoEncriptacion);
+			organizacionesRepository.deleteById(idOrganizacion);
+		}
+
 		return true;
 	}
 
@@ -79,13 +85,15 @@ public class OrganizacionesService implements IOrganizacionesService {
 	 * {@link com.smart.wsorg.service.IOrganizacionesService#actualizaOrganizacion}
 	 */
 	@Override
-	public OrganizacionDTO actualizaOrganizacion(OrganizacionDTO org) throws BusinessException {
+	public OrganizacionDTO actualizaOrganizacion(OrganizacionDTO org, String codigoEncriptacion)
+			throws BusinessException {
 		String nombreStr = org.getNombre().substring(0, 4);
 		String telefono = org.getTelefono().substring(org.getTelefono().length() - 4);
 		org.setIdExterno(nombreStr + telefono + prefijo);
 		Optional<Organizacion> orgBdopt = organizacionesRepository.findById(org.getIdOrganizacion());
 		if (orgBdopt.isPresent()) {
 			Organizacion orgBD = orgBdopt.get();
+			validaCodigoEncriptacion(orgBD, codigoEncriptacion);
 			orgBD.setDireccion(org.getDireccion());
 			orgBD.setIdExterno(Utilerias.encripta(org.getIdExterno() + org.getIdOrganizacion()));
 			orgBD.setNombre(org.getNombre());
@@ -104,9 +112,11 @@ public class OrganizacionesService implements IOrganizacionesService {
 	 * {@link com.smart.wsorg.service.IOrganizacionesService#getOrganizacionById}
 	 */
 	@Override
-	public OrganizacionDTO getOrganizacionById(Integer idOrganizacion) throws BusinessException {
+	public OrganizacionDTO getOrganizacionById(Integer idOrganizacion, String codigoEncriptacion)
+			throws BusinessException {
 		Optional<Organizacion> orgBD = organizacionesRepository.findById(idOrganizacion);
 		if (orgBD.isPresent()) {
+			validaCodigoEncriptacion(orgBD.get(), codigoEncriptacion);
 			return new ModelMapper().map(orgBD.get(), OrganizacionDTO.class);
 		}
 		throw new BusinessException(new ResponseCodeBean("200", "No Se encuentra la organizacion en el sistema",
@@ -114,10 +124,19 @@ public class OrganizacionesService implements IOrganizacionesService {
 				"Se ha presentado un error de acceso a datos, favor de revisar con el administrador del sistema."));
 	}
 
-	@Override
-	public boolean validaCadenaEncriptacion(String cadena) throws BusinessException {
-		// TODO Auto-generated method stub
-		return false;
+	/**
+	 * 
+	 * @param org
+	 * @return
+	 */
+	public boolean validaCodigoEncriptacion(Organizacion org, String codigoEncritacion) throws BusinessException {
+		codigoEncritacion = Utilerias.encripta(codigoEncritacion);
+		String encDb = org.getIdExterno();
+		if (!codigoEncritacion.equals(encDb)) {
+			throw new BusinessException(new ResponseCodeBean("CEINC", "El codigo de encripcion es incorrecto", "CEINC",
+					"El codigo de encripcion es incorrecto"));
+		}
+		return true;
 	}
 
 }

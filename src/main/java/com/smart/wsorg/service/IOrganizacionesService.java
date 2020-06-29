@@ -29,35 +29,29 @@ public interface IOrganizacionesService {
 
 	/**
 	 * 
-	 * @param idOrganizacion id de la organizacion a eliminar
+	 * @param idOrganizacion     id de la organizacion a eliminar
+	 * @param codigoEncriptacion codigo de encriptacion
 	 * @return true/false
 	 * @throws BusinessException Excepcion de negocio
 	 */
-	boolean eliminaOrganizacion(Integer idOrganizacion) throws BusinessException;
+	boolean eliminaOrganizacion(Integer idOrganizacion, String codigoEncriptacion) throws BusinessException;
 
 	/**
 	 * 
-	 * @param org Entity de organizacion
+	 * @param org                Entity de organizacion
+	 * @param codigoEncriptacion codigo de encriptacion
 	 * @return OrganizacionDTO organizacion actualizada
 	 * @throws BusinessException Excepcion de negocio
 	 */
-	OrganizacionDTO actualizaOrganizacion(OrganizacionDTO org) throws BusinessException;
+	OrganizacionDTO actualizaOrganizacion(OrganizacionDTO org, String codigoEncriptacion) throws BusinessException;
 
 	/**
 	 * 
-	 * @param idOrganizacion id de la organizacion a buscar	
+	 * @param idOrganizacion     id de la organizacion a buscar
+	 * @param codigoEncriptacion codigo de encriptacion
 	 * @return OrganizacionDTO organizacion actualizada
 	 * @throws BusinessException Excepcion de negocio
 	 */
-	OrganizacionDTO getOrganizacionById(Integer idOrganizacion) throws BusinessException;
-	
-	
-	/**
-	 * Metodo que valida la cadena de encriptacion
-	 * @param cadena String a validar 
-	 * @return true/false
-	 * @throws BusinessException Excepcion de negocio
-	 */
-	boolean validaCadenaEncriptacion(String cadena) throws BusinessException;
+	OrganizacionDTO getOrganizacionById(Integer idOrganizacion, String codigoEncriptacion) throws BusinessException;
 
 }

@@ -5,10 +5,17 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
+import org.springframework.beans.factory.annotation.Value;
+
+import com.smart.wsorg.dto.OrganizacionDTO;
+import com.smart.wsorg.dto.UsuarioDTO;
+import com.smart.wsorg.service.UsuariosService;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * Clase de utilerias
+ * 
  * @author Ivan Garcia
  *
  */
@@ -17,7 +24,8 @@ public final class Utilerias {
 
 	/**
 	 * Metodo encargado de encriptar en algoritmo SHA 256
-	 * @param campo String  a encriptar
+	 * 
+	 * @param campo String a encriptar
 	 * @return String encriptado
 	 */
 	public static String encripta(String campo) {

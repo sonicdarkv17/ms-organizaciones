@@ -44,7 +44,7 @@ public class OrganizacionesController {
 	private IOrganizacionesService organizacionService;
 
 	/**
-	 * Consulta de Organizaciones
+	 * Consulta de Organizaciones, no se agrega codigo de encriptacion
 	 * 
 	 * @param authorization Token de Autorizacion
 	 * @return List<OrganizacionDTO> Listado de Organizaciones
@@ -52,7 +52,7 @@ public class OrganizacionesController {
 	@ApiOperation(value = "Consulta de Organizaciones", notes = "Devuelve Listado de organizaciones", response = ResponseEntity.class, httpMethod = "GET")
 	@GetMapping
 	public ResponseEntity<SingleResponseBean<List<OrganizacionDTO>>> consultaOrganizaciones(
-			@ApiParam(value = "Token de Autorizacion Bearer +Token") @RequestHeader(value = "Authorization", required = false) String authorization) {
+			@ApiParam(value = "Token de Autorizacion Bearer +Token") @RequestHeader(value = "Authorization") String authorization) {
 
 		log.info("Entra a controller[consultaOrganizacion]");
 		SingleResponseBean<List<OrganizacionDTO>> response = new SingleResponseBean<>();
@@ -79,13 +79,14 @@ public class OrganizacionesController {
 	@GetMapping("/{idOrganizacion}")
 	public ResponseEntity<SingleResponseBean<OrganizacionDTO>> consultaOrganizacion(
 			@ApiParam(value = "Token de Autorizacion Bearer +Token") @RequestHeader(value = "Authorization") String authorization,
-			@ApiParam(value = "ID Organizacion") @PathVariable("idOrganizacion") Integer idOrganizacion) {
+			@ApiParam(value = "ID Organizacion") @PathVariable("idOrganizacion") Integer idOrganizacion,
+			@RequestHeader(value = "codigoEncriptacion") String codigoEncriptacion) {
 
 		log.info("Entra a controller[consultaOrganizacion]");
 		SingleResponseBean<OrganizacionDTO> response = new SingleResponseBean<>();
 
 		try {
-			OrganizacionDTO org = organizacionService.getOrganizacionById(idOrganizacion);
+			OrganizacionDTO org = organizacionService.getOrganizacionById(idOrganizacion, codigoEncriptacion);
 			response.done(org);
 		} catch (BusinessException e) {
 			log.error("Ha ocurrido un error [consultaOrganizacion]", e);
@@ -127,7 +128,7 @@ public class OrganizacionesController {
 
 	/**
 	 * 
-	 * @param org Organizacion a actualizar
+	 * @param org           Organizacion a actualizar
 	 * @param authorization Token de Autorizacion
 	 * @return
 	 */
@@ -135,12 +136,13 @@ public class OrganizacionesController {
 	@PutMapping
 	public ResponseEntity<SingleResponseBean<OrganizacionDTO>> actualizaOrganizacion(
 			@ApiParam(value = "Organizacion a dar de alta") @RequestBody OrganizacionDTO org,
-			@ApiParam(value = "Token de Autorizacion Bearer +Token") @RequestHeader("Authorization") String authorization) {
+			@ApiParam(value = "Token de Autorizacion Bearer +Token") @RequestHeader("Authorization") String authorization,
+			@RequestHeader(value = "codigoEncriptacion") String codigoEncriptacion) {
 
 		SingleResponseBean<OrganizacionDTO> response = new SingleResponseBean<>();
 
 		try {
-			OrganizacionDTO organizacion = organizacionService.actualizaOrganizacion(org);
+			OrganizacionDTO organizacion = organizacionService.actualizaOrganizacion(org, codigoEncriptacion);
 
 			response.done(organizacion);
 		} catch (BusinessException e) {
@@ -156,18 +158,19 @@ public class OrganizacionesController {
 	/**
 	 * 
 	 * @param idOrganizacion Id de organizacion a eliminar
-	 * @param authorization Token de Autorizacion
+	 * @param authorization  Token de Autorizacion
 	 * @return Mensaje de delete
 	 */
 	@ApiOperation(value = "Elimina  Organizacion", response = ResponseEntity.class, httpMethod = "DELETE")
 	@DeleteMapping(value = "/{idOrganizacion}")
 	public ResponseEntity<SingleResponseBean<ResponseMensajeBean>> eliminarBeneficiario(
 			@ApiParam(value = "Id de organizacion a borrar") @PathVariable("idOrganizacion") Integer idOrganizacion,
-			@ApiParam(value = "Token de Autorizacion Bearer +Token") @RequestHeader("Authorization") String authorization) {
+			@ApiParam(value = "Token de Autorizacion Bearer +Token") @RequestHeader("Authorization") String authorization,
+			@RequestHeader(value = "codigoEncriptacion") String codigoEncriptacion) {
 		SingleResponseBean<ResponseMensajeBean> response = new SingleResponseBean<>();
 
 		try {
-			if (organizacionService.eliminaOrganizacion(idOrganizacion)) {
+			if (organizacionService.eliminaOrganizacion(idOrganizacion, codigoEncriptacion)) {
 				response.done(new ResponseMensajeBean("Organizacion eliminada correctamente."));
 			} else {
 				response.error(new ResponseCodeBean("200", "Ha ocurrido un error al eliminar la organizacion", "ERROR",
